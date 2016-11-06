@@ -16,6 +16,7 @@ class SplitCsvFile {
     public $file;                   // where the file is
     public $store_dir;              // where the split files be stored
     public $addFistRowToEachFile;   // add original file's first row to each split file or not
+    public $splitAns;               // default : 2  //if show the message of "Output file suffixes exhausted" , need to level the value up 
     
     public function __construct() {
 
@@ -24,6 +25,7 @@ class SplitCsvFile {
         $this->file='';
         $this->store_dir='./';
         $this->addFistRowToEachFile = false;
+        $this->splitAns = 2;
 
     }
     /**
@@ -44,6 +46,15 @@ class SplitCsvFile {
         $this->filePrefix=$value;
 
     }
+
+    /**
+    * change the split ans value
+    */
+    public function changeAns($value){
+        $this->splitAns = $value;
+
+    }
+
 
     /**
     * determine add original file's first row to each split file or not
@@ -84,7 +95,7 @@ class SplitCsvFile {
         if($this->addFistRowToEachFile){ // have to add origin file's first row to each split file
 
             exec('
-                 tail -n +2 '.$this->file.' | split -l 500 - \''.$this->store_dir.'/\''.$this->filePrefix.'
+                 tail -n +2 '.$this->file.' | split -a '.$this->splitAns.' -l 500 - \''.$this->store_dir.'/\''.$this->filePrefix.'
                  for file in \''.$this->store_dir.'/\''.$this->filePrefix.'*
                  do
                      head -n 1 '.$this->file.' > tmp_file
@@ -96,7 +107,7 @@ class SplitCsvFile {
         }else{ //no need to add origin file's first row to each split file
 
             exec('
-                 tail -n +2 '.$this->file.' | split -l 500 - \''.$this->store_dir.'/\''.$this->filePrefix.'
+                 tail -n +2 '.$this->file.' | split -a '.$this->splitAns.' -l 500 - \''.$this->store_dir.'/\''.$this->filePrefix.'
             ');
 
         }
